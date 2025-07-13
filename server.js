@@ -19,8 +19,8 @@ app.use(express.static('public'));
 // --------- FUNCIONES INDIVIDUALES ---------
 
 async function consultarLima(placa) {
-  const browser = await puppeteer.launch({ headless: true ,
-  args: ['--no-sandbox']});
+  const browser = await puppeteer.launch({ headless: "new" ,
+  args: ['--no-sandbox', "--disable-setuid-sandbox"]});
   const page = await browser.newPage();
   const result = { success: false, results: [] };
 
@@ -138,7 +138,10 @@ async function consultarLima(placa) {
 }
 
 async function consultarCallao(placa) {
-  const browser = await puppeteer.launch({ headless: true });
+ const browser = await puppeteer.launch({
+  headless: "new", // para evitar la advertencia de deprecated
+  args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
   const page = await browser.newPage();
   const result = { success: false, resultados: [] };
 
@@ -212,7 +215,10 @@ async function consultarCallao(placa) {
 }
 
 async function consultarRevisionTecnica(placa) {
-  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] });
+ const browser = await puppeteer.launch({
+  headless: "new", // para evitar la advertencia de deprecated
+  args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
   const page = await browser.newPage();
   try {
     await page.goto('https://rec.mtc.gob.pe/Citv/ArConsultaCitv', { waitUntil: 'networkidle2' });
@@ -276,10 +282,10 @@ async function consultarRevisionTecnica(placa) {
   }
 }
 async function consultarInfogas(placa) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox']
-  });
+ const browser = await puppeteer.launch({
+  headless: "new", // para evitar la advertencia de deprecated
+  args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
 
   const page = await browser.newPage();
   const result = { success: false, resultados: {} };
@@ -429,7 +435,10 @@ app.post("/api/atu", async (req, res) => {
   const { placa } = req.body;
   if (!placa) return res.status(400).json({ error: "Placa requerida" });
 
-  const browser = await puppeteer.launch({ headless: true, args: ["--no-sandbox"] });
+  const browser = await puppeteer.launch({
+  headless: "new", // para evitar la advertencia de deprecated
+  args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
   try {
     const page = await browser.newPage();
     await page.goto("https://sistemas.atu.gob.pe/ConsultaVehiculo/", {
@@ -525,10 +534,10 @@ app.post("/api/consultar", async (req, res) => {
     return res.status(400).json({ error: '❌ Placa inválida' });
   }
 
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox']
-  });
+const browser = await puppeteer.launch({
+  headless: "new", // para evitar la advertencia de deprecated
+  args: ["--no-sandbox", "--disable-setuid-sandbox"]
+});
 
   try {
     const [tarapoto, huancayo] = await Promise.all([
