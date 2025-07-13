@@ -49,7 +49,7 @@ async function consultarLima(placa) {
     const siteKey = "6Ldy_wsTAAAAAGYM08RRQAMvF96g9O_SNQ9_hFIJ";
     const pageUrl = "https://www.sat.gob.pe/websitev8/Popupv2.aspx?t=8";
 
-    const captchaStart = await axios.post("http://2captcha.com/in.php", null, {
+    const captchaStart = await axios.post("https://2captcha.com/in.php", null, {
       params: {
         key: process.env.CAPTCHA_API_KEY,
         method: "userrecaptcha",
@@ -63,7 +63,7 @@ async function consultarLima(placa) {
     let token;
     for (let i = 0; i < 30; i++) {
       await new Promise(r => setTimeout(r, 3000));
-      const check = await axios.get("http://2captcha.com/res.php", {
+      const check = await axios.get("https://2captcha.com/res.php", {
         params: {
           key: process.env.CAPTCHA_API_KEY,
           action: "get",
@@ -150,7 +150,7 @@ async function consultarCallao(placa) {
     formData.append("method", "base64");
     formData.append("body", imgCaptcha.split(",")[1]);
 
-    const { data } = await axios.post("http://2captcha.com/in.php", formData, {
+    const { data } = await axios.post("https://2captcha.com/in.php", formData, {
       headers: formData.getHeaders(),
     });
 
@@ -159,7 +159,7 @@ async function consultarCallao(placa) {
 
     let captchaTexto;
     for (;;) {
-     const res = await axios.get(`http://2captcha.com/res.php?key=${process.env.CAPTCHA_API_KEY}&action=get&id=${captchaId}`);
+     const res = await axios.get(`https://2captcha.com/res.php?key=${process.env.CAPTCHA_API_KEY}&action=get&id=${captchaId}`);
       if (res.data === "CAPCHA_NOT_READY") await new Promise(r => setTimeout(r, 5000));
       else if (res.data.startsWith("OK|")) {
         captchaTexto = res.data.split("|")[1];
@@ -225,7 +225,7 @@ async function consultarRevisionTecnica(placa) {
     formData.append('body', base64Image);
     formData.append('json', 1);
 
-    const send = await axios.post('http://2captcha.com/in.php', formData, {
+    const send = await axios.post('https://2captcha.com/in.php', formData, {
       headers: formData.getHeaders()
     });
 
@@ -233,7 +233,7 @@ async function consultarRevisionTecnica(placa) {
     let captchaResuelto;
     for (let i = 0; i < 20; i++) {
       await new Promise(r => setTimeout(r, 5000));
-      const res = await axios.get(`http://2captcha.com/res.php?key=${process.env.CAPTCHA_API_KEY}&action=get&id=${requestId}&json=1`);
+      const res = await axios.get(`https://2captcha.com/res.php?key=${process.env.CAPTCHA_API_KEY}&action=get&id=${requestId}&json=1`);
       if (res.data.status === 1) {
         captchaResuelto = res.data.request;
         break;
@@ -292,13 +292,13 @@ async function consultarInfogas(placa) {
     const siteKey = '6LctjAQoAAAAAKxodrxo3QPm033HbyDrLf9N7x7P';
     const pageUrl = 'https://vh.infogas.com.pe/';
 
-   const { data: request } = await axios.get(`http://2captcha.com/in.php?key=${process.env.CAPTCHA_API_KEY}&method=userrecaptcha&googlekey=${siteKey}&pageurl=${pageUrl}&json=1`);
+   const { data: request } = await axios.get(`https://2captcha.com/in.php?key=${process.env.CAPTCHA_API_KEY}&method=userrecaptcha&googlekey=${siteKey}&pageurl=${pageUrl}&json=1`);
     const requestId = request.request;
 
     let token = null;
     for (let i = 0; i < 20; i++) {
       await new Promise(r => setTimeout(r, 5000));
-  const { data: response } = await axios.get(`http://2captcha.com/res.php?key=${process.env.CAPTCHA_API_KEY}&action=get&id=${requestId}&json=1`);
+  const { data: response } = await axios.get(`https://2captcha.com/res.php?key=${process.env.CAPTCHA_API_KEY}&action=get&id=${requestId}&json=1`);
       if (response.status === 1) {
         token = response.request;
         break;
