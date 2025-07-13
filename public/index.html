@@ -7,9 +7,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
+<script src="https://checkout.culqi.com/js/v4"></script>
   <title>Consulta Vehicular Integral</title>
-  <script src="https://sdk.mercadopago.com/js/v2"></script>
+   
   <style>
     * { box-sizing: border-box; }
 
@@ -235,36 +235,7 @@
       <div id="vehiculo-info" class="tarjeta"></div>
     </div>
   </div>
- <div id="formulario-pago-container" class="container" style="display:none; margin-top: 40px;">
-  <h2>Pago con Tarjeta</h2>
-  <form id="formulario-pago">
-    <label for="cardholderName">Nombre del Titular</label>
-    <input type="text" id="form-cardholderName" placeholder="Juan Pérez" required />
-
-    <label for="cardNumber">Número de Tarjeta</label>
-    <div id="form-cardNumber"></div>
-
-    <label for="expiration">Fecha de Vencimiento (MM/AA)</label>
-    <div id="form-expirationDate"></div>
-
-    <label for="cvv">Código CVV</label>
-    <div id="form-securityCode"></div>
-
-    <label for="docType">Tipo de documento</label>
-    <select id="form-docType"></select>
-
-    <label for="docNumber">Número de documento</label>
-    <input type="text" id="form-docNumber" placeholder="12345678" required />
-
-    <label for="email">Correo electrónico</label>
-    <input type="email" id="form-email" placeholder="correo@dominio.com" required />
-
-    <label for="amount">Monto a Pagar (S/)</label>
-    <input type="number" id="form-amount" value="10.00" required min="1" step="0.01" />
-
-    <button type="submit">Pagar</button>
-  </form>
-</div>
+  
   <div class="footer">
     <p>© 2025 Consulta Vehicular. Todos los derechos reservados.</p>
     <p>Contacto: <a href="mailto:soporte@consultavehicular.pe">soporte@consultavehicular.pe</a></p>
@@ -700,10 +671,11 @@ function compartirWhatsApp() {
       alert("Ingrese una placa válida antes de continuar con el pago.");
       return;
     }
-    mostrarFormularioPago();
+      Culqi.open();
+e.preventDefault(); 
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
+  /*document.addEventListener("DOMContentLoaded", function () {
     // Inicializar MercadoPago
     const mp = new MercadoPago("APP_USR-d2a94353-0629-4376-ae63-f98433ae5c37", {
       locale: "es-PE"
@@ -795,7 +767,7 @@ function compartirWhatsApp() {
       },
     });
   });
-
+*/
   async function realizarConsultas() {
     try {
       const [lima, callao, revision, infogas, otros] = await Promise.all([
@@ -851,6 +823,52 @@ function compartirWhatsApp() {
   window.addEventListener("error", function (e) {
     console.error("👉 Error atrapado:", e.error);
   });
+ Culqi.publicKey = 'pk_test_HVJ7ATpAkgpHW4ki'; // reemplaza con tu clave pública real
+  Culqi.options({
+    lang: 'auto',
+    installments: false,
+    modal: true
+  });
+ Culqi.settings({
+  title: 'Consulta Vehicular',
+  currency: 'PEN',
+  description: 'Pago para consulta por placa',
+  amount: 1200 // Monto en céntimos (S/10.00)
+});
+
+function culqi() {
+  if (Culqi.token) {
+    const token = Culqi.token.id;
+
+    fetch("/culqi-pagar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        token: token,
+        email: Culqi.token.email,
+        placa: placa,
+        monto: 10.00
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        alert("✅ Pago exitoso");
+        consultar(); // Llamamos a consultar después de pago exitoso
+      } else {
+        alert("❌ Error en el pago: " + data.message);
+      }
+    })
+    .catch(err => {
+      alert("❌ Error al procesar el pago.");
+      console.error(err);
+    });
+
+  } else {
+    console.log("Culqi error:", Culqi.error);
+    alert("❌ Error con el pago: " + Culqi.error.user_message);
+  }
+}
   </script>
 </body>
 </html>

@@ -2,11 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const puppeteer = require("puppeteer");
 const axios = require("axios");
- 
+ const router = express.Router();
 const FormData = require("form-data");
  
 const bodyParser = require("body-parser");
- const { MercadoPagoConfig } = require('mercadopago');
+  
  
 const PORT = 3000;
 
@@ -552,48 +552,45 @@ app.post("/api/consultar", async (req, res) => {
    
 
 
-
-const client = new MercadoPagoConfig({
-  accessToken: 'APP_USR-4424613918547982-071116-fae4767f4c0af92ce13ef623f4c0596c-2549678329',
-});
+ 
 
 // ✅ Ruta para procesar pagos
-app.post("/procesar-pago", async (req, res) => {
-  const {
-    token,
-    issuerId,
-    paymentMethodId,
-    transactionAmount,
-    installments,
-    payer
-  } = req.body;
+ 
 
-  try {
-    const result = await client.payment.create({
-      body: {
-        token,
-        issuer_id: issuerId,
-        payment_method_id: paymentMethodId,
-        transaction_amount: Number(transactionAmount),
-        installments: Number(installments),
-        payer: {
-          email: payer.email,
-          identification: {
-            type: payer.identification.type,
-            number: payer.identification.number
-          }
-        }
-      }
+ app.post('/culqi-pagar', async (req, res) => {
+  const { token, email, placa, monto } = req.body;
+
+ try {
+    const response = await fetch('https://api.culqi.com/v2/charges', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer sk_test_kGQnDxF3HdAxXazi' // tu clave privada
+      },
+      body: JSON.stringify({
+        amount: monto * 100,
+        currency_code: 'PEN',
+        email,
+        source_id: token,
+        description: `Pago por consulta de placa ${placa}`
+      })
     });
 
-    res.json(result);
-  } catch (error) {
-    console.error("❌ Error al procesar el pago:", error);
-    res.status(500).json({ error: "Error al procesar el pago" });
+    const result = await response.json();
+
+    if (result.object === 'charge') {
+      res.json({ success: true, data: result });
+    } else {
+      res.json({ success: false, message: result.user_message || 'Error en el pago' });
+    }
+
+  } catch (err) {
+    console.error(err);
+    res.json({ success: false, message: 'Error en el servidor' });
   }
 });
 
- 
+module.exports = router;
 // --------- INICIO ---------
 
 app.listen(PORT, () => {
