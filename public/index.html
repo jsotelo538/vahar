@@ -214,7 +214,7 @@
       <p>Revisa papeletas,SUNARP, SOAT,ATU, Revisión Técnica e información GNV</p>
     </div>
 <input type="text" id="placa" placeholder="Ejemplo: ABC123" />
-<button onclick="mostrarFormularioAntesDeConsultar()">Consultar</button>
+<button onclick="mostrarFormularioAntesDeConsultar(event)">Consultar</button>
 <button onclick="descargarPDF()">📄 Descargar PDF</button>
 <button id="btn-whatsapp" onclick="compartirWhatsApp()" style="background-color: #25d366;">
   📲 Compartir por WhatsApp
@@ -665,14 +665,14 @@ function compartirWhatsApp() {
     document.getElementById("placa").disabled = true;
   }
 
-  function mostrarFormularioAntesDeConsultar() {
+  function mostrarFormularioAntesDeConsultar(event) {
     placa = document.getElementById("placa").value.trim().toUpperCase();
     if (!placa || placa.length < 5) {
       alert("Ingrese una placa válida antes de continuar con el pago.");
       return;
     }
       Culqi.open();
-e.preventDefault(); 
+  if (event) event.preventDefault();
   }
 
   /*document.addEventListener("DOMContentLoaded", function () {

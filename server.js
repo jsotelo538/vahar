@@ -8,7 +8,7 @@ const FormData = require("form-data");
 const bodyParser = require("body-parser");
   
  
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
  
 
@@ -19,7 +19,8 @@ app.use(express.static('public'));
 // --------- FUNCIONES INDIVIDUALES ---------
 
 async function consultarLima(placa) {
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ headless: true ,
+  args: ['--no-sandbox']});
   const page = await browser.newPage();
   const result = { success: false, results: [] };
 
@@ -137,7 +138,7 @@ async function consultarLima(placa) {
 }
 
 async function consultarCallao(placa) {
-  const browser = await puppeteer.launch({ headless: "new" });
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   const result = { success: false, resultados: [] };
 
@@ -590,9 +591,9 @@ app.post("/api/consultar", async (req, res) => {
   }
 });
 
-module.exports = router;
+ 
 // --------- INICIO ---------
 
 app.listen(PORT, () => {
-  console.log("Servidor activo en http://localhost:" + PORT);
-}); 
+  console.log(`Servidor activo en http://localhost:${PORT}`);
+});
