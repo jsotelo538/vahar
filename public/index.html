@@ -7,7 +7,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://checkout.culqi.com/js/v4"></script>
+ 
   <title>Consulta Vehicular Integral</title>
    
   <style>
@@ -214,7 +214,7 @@
       <p>Revisa papeletas,SUNARP, SOAT,ATU, Revisión Técnica e información GNV</p>
     </div>
 <input type="text" id="placa" placeholder="Ejemplo: ABC123" />
-<button onclick="mostrarFormularioAntesDeConsultar(event)">Consultar</button>
+<button onclick="consultar()">Consultar</button>
 <button onclick="descargarPDF()">📄 Descargar PDF</button>
 <button id="btn-whatsapp" onclick="compartirWhatsApp()" style="background-color: #25d366;">
   📲 Compartir por WhatsApp
@@ -333,7 +333,7 @@
       vehiculoCont.innerHTML = "<p>Consultando datos técnicos...</p>";
 
    
-  const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzOTA3OSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImNvbnN1bHRvciJ9.ifWS2ij-48ZfllPYHPd5RjHw0rhJGvulCAGopnu4W1A";
+  const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzOTEyMSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImNvbnN1bHRvciJ9.WA0AKHrDEe61gBbS4UERoVQlu9cDR0CRf4sJImTbbn8";
 
   try {
     const [soatRes, infoRes] = await Promise.all([
@@ -660,114 +660,10 @@ function compartirWhatsApp() {
     let datosCompletos = "";
   let placa = "";
 
-  function mostrarFormularioPago() {
-    document.getElementById("formulario-pago-container").style.display = "block";
-    document.getElementById("placa").disabled = true;
-  }
+  
 
-  function mostrarFormularioAntesDeConsultar(event) {
-    placa = document.getElementById("placa").value.trim().toUpperCase();
-    if (!placa || placa.length < 5) {
-      alert("Ingrese una placa válida antes de continuar con el pago.");
-      return;
-    }
-      Culqi.open();
-  if (event) event.preventDefault();
-  }
-
-  /*document.addEventListener("DOMContentLoaded", function () {
-    // Inicializar MercadoPago
-    const mp = new MercadoPago("APP_USR-d2a94353-0629-4376-ae63-f98433ae5c37", {
-      locale: "es-PE"
-    });
-
-    const cardForm = mp.cardForm({
-      amount: "100",
-      autoMount: true,
-      form: {
-        id: 'formulario-pago',
-        cardholderName: {
-          id: 'form-cardholderName',
-          placeholder: 'Juan Pérez',
-        },
-        cardNumber: {
-          id: 'form-cardNumber',
-          placeholder: '1234 5678 9012 3456',
-        },
-        expirationDate: {
-          id: 'form-expirationDate',
-          placeholder: 'MM/AA',
-        },
-        securityCode: {
-          id: 'form-securityCode',
-          placeholder: '123',
-        },
-        identificationType: {
-          id: 'form-docType',
-        },
-        identificationNumber: {
-          id: 'form-docNumber',
-          placeholder: '12345678',
-        },
-        cardholderEmail: {
-          id: 'form-email',
-          placeholder: 'correo@dominio.com',
-        },
-      },
-      callbacks: {
-        onFormMounted: (error) => {
-          if (error) return console.warn("❌ Error al montar formulario:", error);
-          console.log("✅ Formulario montado correctamente");
-        },
-        onSubmit: async (event) => {
-          event.preventDefault();
-
-          // Obtener datos del formulario
-          const {
-            token,
-            paymentMethodId,
-            issuerId,
-            installments,
-            amount,
-            payer,
-          } = await cardForm.getCardFormData();
-
-          try {
-            const res = await fetch("/pagar", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                token,
-                amount,
-                description: "Pago desde formulario web",
-                installments: Number(installments),
-                paymentMethodId,
-                issuerId,
-                payerEmail: payer.email,
-                docType: payer.identification.type,
-                docNumber: payer.identification.number,
-              }),
-            });
-
-            const result = await res.json();
-            console.log(result);
-            alert("✅ Pago procesado correctamente");
-
-            // Ocultar formulario y mostrar resultados
-            document.getElementById("formulario-pago-container").style.display = "none";
-            document.getElementById("resultados").textContent = "💳 Pago exitoso. Consultando datos vehiculares...";
-
-            await realizarConsultas();
-
-          } catch (err) {
-            console.error("❌ Error al procesar el pago:", err);
-            alert("Error al procesar el pago");
-          }
-        },
-      },
-    });
-  });
-*/
+   
+  
   async function realizarConsultas() {
     try {
       const [lima, callao, revision, infogas, otros] = await Promise.all([
@@ -836,39 +732,7 @@ function compartirWhatsApp() {
   amount: 1200 // Monto en céntimos (S/10.00)
 });
 
-function culqi() {
-  if (Culqi.token) {
-    const token = Culqi.token.id;
-
-    fetch("/culqi-pagar", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        token: token,
-        email: Culqi.token.email,
-        placa: placa,
-        monto: 10.00
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert("✅ Pago exitoso");
-        consultar(); // Llamamos a consultar después de pago exitoso
-      } else {
-        alert("❌ Error en el pago: " + data.message);
-      }
-    })
-    .catch(err => {
-      alert("❌ Error al procesar el pago.");
-      console.error(err);
-    });
-
-  } else {
-    console.log("Culqi error:", Culqi.error);
-    alert("❌ Error con el pago: " + Culqi.error.user_message);
-  }
-}
+ 
   </script>
 </body>
 </html>
