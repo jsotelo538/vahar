@@ -1,0 +1,739 @@
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+ 
+  <title>Consulta Vehicular Integral</title>
+   
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #e0f2ff, #f7faff);
+  margin: 0;
+  padding: 0;
+  color: #333;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header img {
+      width: 180px;
+      margin-bottom: 0px;
+    }
+
+    .header h1 {
+      margin: 0;
+      color: #1e2f45;
+    }
+
+    .header p {
+      font-size: 18px;
+      color: #555;
+      margin-top: 5px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+ 
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      font-size: 16px;
+      border-radius: 50px;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .section {
+      margin-top: 30px;
+    }
+
+   .tarjeta {
+  background: #f9fcff;
+  border-left: 5px solid #3498db;
+  padding: 20px 25px;
+  margin-top: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease;
+}
+
+.tarjeta:hover {
+  transform: scale(1.01);
+}
+.section h2 {
+  color: #007bff;
+  font-size: 22px;
+  border-left: 4px solid #007bff;
+  padding-left: 10px;
+  margin-top: 30px;
+}
+
+    .tabla-responsive {
+      overflow-x: auto;
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      min-width: 900px;
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      background-color: #f9fafb;
+    }
+
+    .spinner {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+#nprogress .bar {
+  background: #28a745 !important; /* Verde */
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #28a745, 0 0 5px #28a745;
+}
+    .loader {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #3498db;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .mensaje-error {
+      background-color: #fdecea;
+      color: #e74c3c;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+  .footer {
+  margin-top: 60px;
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  color: white;
+  padding: 25px;
+  text-align: center;
+  border-radius: 0 0 15px 15px;
+  font-size: 15px;
+}
+
+    .footer a {
+      color: #ffe;
+      text-decoration: underline;
+    }
+   .mensaje-info {
+  background-color: #e8f4fd;
+  color: #007bff;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid #b3daff;
+  font-weight: 500;
+}
+#btn-whatsapp {
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+    @media (max-width: 600px) {
+      input[type="text"], button {
+        width: 100%;
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+
+      table {
+        min-width: unset;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="logo3.png" alt="Logo Consulta Vehicular">
+      <h1>Consulta Vehicular Integral</h1>
+      <p> ¡Consulta en segundos el historial de cualquier vehículo con solo su placa!     </p>
+    </div>
+<input type="text" id="placa" placeholder="Ejemplo: ABC123" />
+<button onclick="consultar()">Consultar</button>
+ 
+<button onclick="descargarPDF()">📄 Descargar PDF</button>
+<button id="btn-whatsapp" onclick="compartirWhatsApp()" style="background-color: #25d366;">
+  📲 Compartir por WhatsApp
+</button>
+ 
+    <div id="resultado-lima" class="section"></div>
+    <div id="resultado-callao" class="section"></div>
+    <div id="resultado-revision" class="section"></div>
+    <div id="resultado-infogas" class="section"></div>
+    <div id="resultado-tarapoto" class="section"></div>
+    <div id="resultado-atu" class="section"></div>
+<div id="resultado-huancayo" class="section"></div>
+    <div id="soat-vehiculo" class="section" style="display:none;">
+      <h2>Información del SOAT</h2>
+      <div id="soat-info" class="tarjeta"></div>
+
+      <h2 style="margin-top: 30px;">Información del Vehículo</h2>
+      <div id="vehiculo-info" class="tarjeta"></div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>© 2025 Consulta Vehicular. Todos los derechos reservados.</p>
+    <p>Contacto: <a href="mailto:soporte@consultavehicular.pe">soporte@consultavehicular.pe</a></p>
+  </div>
+
+  <script>
+    async function consultar() {
+        NProgress.start(); // 👉 Inicia la barra de progreso
+      const placa = document.getElementById("placa").value.trim().toUpperCase();
+      const limaDiv = document.getElementById("resultado-lima");
+      const callaoDiv = document.getElementById("resultado-callao");
+
+       limaDiv.innerHTML = '<h2>Resultados SAT Lima</h2><div class="spinner"><div class="loader"></div></div>';
+    callaoDiv.innerHTML = '<h2>Resultados SAT Callao</h2><div class="spinner"><div class="loader"></div></div>';
+
+      if (!placa) {
+        NProgress.done(); // 👉 Detenemos si hay error temprano
+           limaDiv.innerHTML = '<div class="mensaje-error">Ingrese una placa válida.</div>';
+        callaoDiv.innerHTML = "";
+        return;
+      }
+
+      // SAT Lima
+      fetch("/api/consultar-lima", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ placa })
+      }).then(res => res.json()).then(data => {
+        if (!data.success || !data.results?.length) {
+     limaDiv.innerHTML = '<h2>Resultados SAT Lima</h2><div class="mensaje-info">ℹ️ No se encontraron papeletas.</div>';
+          return;
+        }
+ let html = '<h2>Resultados SAT Lima</h2><div class="tabla-responsive"><table><tr>' +
+        '<th>Placa</th><th>Reglamento</th><th>Falta</th><th>Documento</th>' +
+        '<th>Fecha</th><th>Importe</th><th>Gastos</th><th>Descuentos</th>' +
+        '<th>Deuda</th><th>Estado</th></tr>';
+      data.results.forEach(r => {
+        html += `<tr>
+          <td>${r.Placa}</td><td>${r.Reglamento}</td><td>${r.Falta}</td>
+          <td>${r.Documento}</td><td>${r.FechaInfraccion}</td>
+          <td>${r.Importe}</td><td>${r.Gastos}</td><td>${r.Descuentos}</td>
+          <td>${r.Deuda}</td><td>${r.Estado}</td></tr>`;
+      });
+      html += '</table></div>';
+      limaDiv.innerHTML = html;
+    }).catch(() => {
+      limaDiv.innerHTML = '<h2>Resultados SAT Lima</h2><div class="mensaje-error">Error al consultar.</div>';
+    });
+
+      // SAT Callao
+     fetch("/api/consultar-callao", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ placa })
+    }).then(res => res.json()).then(data => {
+      if (!data.success || !data.resultados?.length) {
+        callaoDiv.innerHTML = '<h2>Resultados SAT Callao</h2><div class="mensaje-info">ℹ️ No se encontraron papeletas.</div>';
+        return;
+      }
+
+      let html = '<h2>Resultados SAT Callao</h2><div class="tabla-responsive"><table><tr>' +
+        '<th>Código</th><th>N° Papeleta</th><th>Fecha Infracción</th>' +
+        '<th>Total Infracción</th><th>Beneficio</th><th>Descuento Web</th>' +
+        '<th>Cuotas</th><th>Detalle</th><th>Fraccionar</th></tr>';
+
+      data.resultados.forEach(r => {
+        if (!r.Codigo || r.Codigo.toLowerCase().includes("valor") || r.Codigo.toLowerCase().includes("emisión")) return;
+        html += `<tr>
+          <td>${r.Codigo}</td><td>${r.NumeroPapeleta}</td><td>${r.FechaInfraccion}</td>
+          <td>${r.Total}</td><td>${r.Beneficio}</td><td>${r.DescuentoWeb}</td>
+          <td>${r.Cuota}</td><td>${r.Detalle}</td><td>${r.Fraccionar}</td>
+        </tr>`;
+      });
+
+      html += '</table></div>';
+      callaoDiv.innerHTML = html;
+    }).catch(() => {
+      callaoDiv.innerHTML = '<h2>Resultados SAT Callao</h2><div class="mensaje-error">Error al consultar.</div>';
+    });
+
+      // SOAT + Info técnica
+      consultarSOATyVehiculo(placa);
+      consultarRevisionTecnica(placa);
+      consultarInfogas(placa);
+      consultarSatProvincias(placa); // Tarapoto y Huancayo
+      consultarATU(placa);
+      NProgress.done(); // 👉 Detenemos la barra cuando todo ha terminado
+    }
+
+    async function consultarSOATyVehiculo(placa) {
+      const soatCont = document.getElementById("soat-info");
+      const vehiculoCont = document.getElementById("vehiculo-info");
+ document.getElementById("soat-vehiculo").style.display = "block";
+      soatCont.innerHTML = "<p>Consultando SOAT...</p>";
+      vehiculoCont.innerHTML = "<p>Consultando datos técnicos...</p>";
+
+   
+  const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzOTEyMSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImNvbnN1bHRvciJ9.WA0AKHrDEe61gBbS4UERoVQlu9cDR0CRf4sJImTbbn8";
+
+  try {
+    const [soatRes, infoRes] = await Promise.all([
+      fetch(`https://api.factiliza.com/v1/placa/soat/${placa}`, { headers: { Authorization: token } }).then(r => r.json()),
+      fetch(`https://api.factiliza.com/v1/placa/info/${placa}`, { headers: { Authorization: token } }).then(r => r.json())
+    ]);
+
+        const soat = soatRes.data;
+        const info = infoRes.data;
+
+        if (soat && soat.placa) {
+          const estadoIcon = soat.estado === "VIGENTE"
+            ? "<span style='color:green;font-weight:bold;'>&#9989; VIGENTE</span>"
+            : "<span style='color:red;font-weight:bold;'>&#10060; NO VIGENTE</span>";
+
+         soatCont.innerHTML = `
+        <p><strong>Placa:</strong> ${soat.placa}</p>
+        <p><strong>Aseguradora:</strong> ${soat.nombre_compania}</p>
+        <p><strong>Inicio:</strong> ${soat.fecha_inicio}</p>
+        <p><strong>Fin:</strong> ${soat.fecha_fin}</p>
+        <p><strong>Estado:</strong> ${estadoIcon}</p>
+        <p><strong>N° de Póliza:</strong> ${soat.numero_poliza}</p>
+      `;
+    } else {
+      soatCont.innerHTML = '<p style="color:red">❌ No se encontró información del SOAT.</p>';
+    }
+
+       if (info && info.placa) {
+      vehiculoCont.innerHTML = `
+        <p><strong>Placa:</strong> ${info.placa}</p>
+        <p><strong>Marca:</strong> ${info.marca}</p>
+        <p><strong>Modelo:</strong> ${info.modelo}</p>
+        <p><strong>Color:</strong> ${info.color}</p>
+        <p><strong>Serie:</strong> ${info.serie}</p>
+        <p><strong>Motor:</strong> ${info.motor}</p>
+        <p><strong>VIN:</strong> ${info.vin}</p>
+      `;
+    } else {
+      vehiculoCont.innerHTML = '<p style="color:red">❌ No se encontró información técnica del vehículo.</p>';
+    }
+
+  } catch (error) {
+    soatCont.innerHTML = `<p style="color:red">❌ Error SOAT: ${error.message}</p>`;
+    vehiculoCont.innerHTML = `<p style="color:red">❌ Error Vehículo: ${error.message}</p>`;
+  }
+}
+
+
+ async function consultarRevisionTecnica(placa) {
+  const revisionDiv = document.getElementById("resultado-revision");
+  revisionDiv.innerHTML = `<h2>Revisión Técnica MTC</h2><div class="spinner"><div class="loader"></div></div>`;
+
+  try {
+    const res = await fetch("/api/consultar-revision", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ placa })
+    });
+
+    const data = await res.json();
+
+    if (data.error || !data.resultados || data.resultados.length === 0) {
+      revisionDiv.innerHTML = `<h2>Revisión Técnica MTC</h2><div class="mensaje-error">❌ No se encontraron resultados.</div>`;
+      return;
+    }
+
+    const r = data.resultados[0];
+    const estadoColor = (r.resultado || "").toLowerCase().includes("aprobado") ? "green" : "red";
+
+    const html = `
+      <div class="tarjeta">
+        <p><strong>Placa:</strong> ${r.placa}</p>
+        <p><strong>Certificado:</strong> ${r.certificado}</p>
+        <p><strong>Fecha de Revisión:</strong> ${r.fechaRevision}</p>
+        <p><strong>Fecha de Vencimiento:</strong> ${r.fechaVencimiento}</p>
+        <p><strong>Resultado:</strong> <span style="color:${estadoColor};font-weight:bold;">${r.resultado}</span></p>
+        <p><strong>Planta:</strong> ${r.planta}</p>
+      </div>
+    `;
+
+    revisionDiv.innerHTML = `<h2>Revisión Técnica MTC</h2>${html}`;
+  } catch (err) {
+    revisionDiv.innerHTML = `<h2>Revisión Técnica MTC</h2><div class="mensaje-error">❌ Error al consultar revisión técnica.</div>`;
+  }
+}
+
+async function consultarInfogas(placa) {
+  const infogasDiv = document.getElementById("resultado-infogas");
+  infogasDiv.innerHTML = `<h2>Infogas GNV</h2><div class="spinner"><div class="loader"></div></div>`;
+
+  setTimeout(() => {
+    if (document.querySelector("#resultado-infogas .loader")) {
+      infogasDiv.innerHTML += `<p style="color: #999;">⚠️ La consulta de Infogas está tomando más tiempo de lo habitual. Por favor, espere...</p>`;
+    }
+  }, 10000);
+
+  try {
+    const res = await fetch("/api/consultar-infogas", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ placa })
+    });
+
+    const data = await res.json();
+
+    if (!data.success || !data.resultados) {
+      infogasDiv.innerHTML = `<h2>Infogas GNV</h2><div class="mensaje-error">❌ No se encontraron datos de Infogas.</div>`;
+      return;
+    }
+
+    const r = data.resultados;
+
+    const html = `
+      <div class="tarjeta">
+        <p><strong>Placa:</strong> ${placa}</p>
+        <p><strong>Tipo de Combustible:</strong> ${r.tipoCombustible || '-'}</p>
+        <p><strong>Habilitado para consumir:</strong> ${r.habilitado || '-'}</p>
+        <p><strong>¿Tiene Crédito?:</strong> ${r.tieneCredito || '-'}</p>
+        <p><strong>Vencimiento Revisión Anual:</strong> ${r.vencimientoRevisionAnual || '-'}</p>
+        <p><strong>Vencimiento de Cilindro:</strong> ${r.vencimientoCilindro || '-'}</p>
+      </div>
+    `;
+
+    infogasDiv.innerHTML = `<h2>Infogas GNV</h2>${html}`;
+  } catch (error) {
+    infogasDiv.innerHTML = `<h2>Infogas GNV</h2><div class="mensaje-error">❌ Error al consultar Infogas.</div>`;
+  }
+}
+
+async function consultarSatProvincias(placa) {
+  const tarapotoDiv = document.getElementById("resultado-tarapoto");
+  const huancayoDiv = document.getElementById("resultado-huancayo");
+
+  tarapotoDiv.innerHTML = `<h2>Resultados SAT Tarapoto</h2><div class="spinner"><div class="loader"></div></div>`;
+  huancayoDiv.innerHTML = `<h2>Resultados SAT Huancayo</h2><div class="spinner"><div class="loader"></div></div>`;
+
+  try {
+    const res = await fetch("/api/consultar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ placa })
+    });
+
+    const data = await res.json();
+
+    // Tarapoto
+    if (Array.isArray(data.tarapoto)) {
+      tarapotoDiv.innerHTML = `<h2>Resultados SAT Tarapoto</h2>` + generarTablaProvincias(data.tarapoto);
+    } else {
+      tarapotoDiv.innerHTML = `<h2>Resultados SAT Tarapoto</h2><div class="mensaje-info">ℹ️ ${data.tarapoto}</div>`;
+    }
+
+    // Huancayo
+    if (Array.isArray(data.huancayo)) {
+      huancayoDiv.innerHTML = `<h2>Resultados SAT Huancayo</h2>` + generarTablaProvincias(data.huancayo);
+    } else {
+      huancayoDiv.innerHTML = `<h2>Resultados SAT Huancayo</h2><div class="mensaje-info">ℹ️ ${data.huancayo}</div>`;
+    }
+
+  } catch (err) {
+    tarapotoDiv.innerHTML = `<h2>Resultados SAT Tarapoto</h2><div class="mensaje-error">❌ Error al consultar.</div>`;
+    huancayoDiv.innerHTML = `<h2>Resultados SAT Huancayo</h2><div class="mensaje-error">❌ Error al consultar.</div>`;
+  }
+}
+
+function generarTablaProvincias(datos) {
+  let html = `<div class="tabla-responsive"><table>
+    <tr><th>N°</th><th>Placa</th><th>Infracción</th><th>Fecha</th><th>Estado / Monto</th></tr>`;
+  
+  datos.forEach(d => {
+    html += `<tr>
+      <td>${d.numero || ''}</td>
+      <td>${d.placa || ''}</td>
+      <td>${d.infraccion || ''}</td>
+      <td>${d.fecha || ''}</td>
+      <td>${d.estado || d.monto || ''}</td>
+    </tr>`;
+  });
+
+  html += `</table></div>`;
+  return html;
+}
+async function consultarATU(placa) {
+  const atuDiv = document.getElementById("resultado-atu");
+  atuDiv.innerHTML = `<h2>Consulta ATU</h2><div class="spinner"><div class="loader"></div></div>`;
+
+  try {
+    const res = await fetch("/api/atu", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ placa })
+    });
+
+    const data = await res.json();
+
+    if (!data.registrado) {
+      atuDiv.innerHTML = `<h2>Consulta ATU</h2><div class="mensaje-error">❌ Vehículo no registrado en ATU.</div>`;
+      return;
+    }
+
+    const html = `
+      <div class="tarjeta">
+        <p><strong>Placa:</strong> ${data.vehiculo.placa}</p>
+        <p><strong>Modalidad:</strong> ${data.vehiculo.modalidad}</p>
+        <p><strong>Marca:</strong> ${data.vehiculo.marca}</p>
+        <p><strong>Modelo:</strong> ${data.vehiculo.modelo}</p>
+        <p><strong>Circulación:</strong> ${data.vehiculo.circulacion}</p>
+        <p><strong>Estado:</strong> ${data.vehiculo.estado}</p>
+        <hr>
+        <p><strong>N° Constancia:</strong> ${data.tarjeta.numero}</p>
+        <p><strong>Fecha Emisión:</strong> ${data.tarjeta.fecha_emision}</p>
+        <p><strong>Fecha Vencimiento:</strong> ${data.tarjeta.fecha_vencimiento}</p>
+        <hr>
+        <p><strong>Documento Titular:</strong> ${data.titular.documento}</p>
+        <p><strong>Ruta:</strong> ${data.titular.ruta}</p>
+        <p><strong>Titular:</strong> ${data.titular.nombre}</p>
+      </div>
+    `;
+
+    atuDiv.innerHTML = `<h2>Consulta ATU</h2>${html}`;
+
+  } catch (error) {
+    atuDiv.innerHTML = `<h2>Consulta ATU</h2><div class="mensaje-error">❌ Error al consultar ATU.</div>`;
+  }
+}
+function cargarImagenBase64(url) {
+  return fetch(url)
+    .then(res => res.blob())
+    .then(blob => new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    }));
+}
+
+async function descargarPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+  const logoUrl = "logo3.png";
+  const img = new Image();
+  img.src = logoUrl;
+  await new Promise((resolve) => (img.onload = resolve));
+
+  // Logo y encabezado
+  doc.addImage(img, "PNG", 15, 10, 40, 20);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text("Consulta Vehicular Integral", 60, 20);
+
+  const fecha = new Date().toLocaleString("es-PE");
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text(`Fecha de consulta: ${fecha}`, 60, 27); // ✅ Corregido
+
+  doc.setLineWidth(0.5);
+  doc.line(10, 32, 200, 32);
+
+  let y = 40;
+
+  function agregarSeccion(titulo, elementoHTML) {
+    const textoPlano = elementoHTML.innerText.trim();
+    if (!textoPlano) return;
+
+    doc.setFontSize(13);
+    doc.setTextColor(0, 102, 204);
+    doc.setFont("helvetica", "bold");
+    doc.text(titulo, 15, y);
+    y += 7;
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(33);
+
+    const lineas = doc.splitTextToSize(textoPlano, 180);
+    lineas.forEach((line) => {
+      if (y > 270) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(line, 15, y);
+      y += 6;
+    });
+
+    y += 5;
+  }
+
+  const secciones = [
+    { titulo: "SAT Lima", id: "resultado-lima" },
+    { titulo: "SAT Callao", id: "resultado-callao" },
+    { titulo: "SAT Tarapoto", id: "resultado-tarapoto" },
+    { titulo: "SAT Huancayo", id: "resultado-huancayo" },
+    { titulo: "SOAT", id: "soat-info" },
+    { titulo: "Datos del Vehículo", id: "vehiculo-info" },
+    { titulo: "ATU", id: "resultado-atu" },
+    { titulo: "Revisión Técnica MTC", id: "resultado-revision" },
+    { titulo: "Infogas GNV", id: "resultado-infogas" }
+  ];
+
+  for (const s of secciones) {
+    const el = document.getElementById(s.id);
+    if (el) agregarSeccion(s.titulo, el);
+  }
+
+  doc.save("consulta-vehicular.pdf");
+}
+
+function compartirWhatsApp() {
+  const placa = document.getElementById("placa").value.trim().toUpperCase();
+
+  if (!placa) {
+    alert("Por favor, ingresa una placa para compartir.");
+    return;
+  }
+
+  const mensaje = `Hola, consulta vehicular para la placa *${placa}*: https://tusitio.com/?placa=${placa}`;
+  const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensaje)}`;
+
+  window.open(url, "_blank");
+}
+ 
+   
+  
+    let datosCompletos = "";
+  let placa = "";
+
+  
+
+   
+  
+  async function realizarConsultas() {
+    try {
+      const [lima, callao, revision, infogas, otros] = await Promise.all([
+        fetch("/api/consultar-lima", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ placa })
+        }).then(res => res.json()),
+
+        fetch("/api/consultar-callao", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ placa })
+        }).then(res => res.json()),
+
+        fetch("/api/consultar-revision", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ placa })
+        }).then(res => res.json()),
+
+        fetch("/api/consultar-infogas", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ placa })
+        }).then(res => res.json()),
+
+        fetch("/api/consultar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ placa })
+        }).then(res => res.json())
+      ]);
+
+      const resultadoFinal = {
+        placa,
+        lima,
+        callao,
+        revision,
+        infogas,
+        tarapoto: otros.tarapoto,
+        huancayo: otros.huancayo
+      };
+
+      datosCompletos = JSON.stringify(resultadoFinal, null, 2);
+      document.getElementById("resultados").textContent = "✅ Consulta finalizada:\n\n" + datosCompletos;
+
+    } catch (err) {
+      document.getElementById("resultados").textContent = "❌ Error en la consulta: " + err.message;
+    }
+  }
+
+  window.addEventListener("error", function (e) {
+    console.error("👉 Error atrapado:", e.error);
+  });
+ Culqi.publicKey = 'pk_test_HVJ7ATpAkgpHW4ki'; // reemplaza con tu clave pública real
+  Culqi.options({
+    lang: 'auto',
+    installments: false,
+    modal: true
+  });
+ Culqi.settings({
+  title: 'Consulta Vehicular',
+  currency: 'PEN',
+  description: 'Pago para consulta por placa',
+  amount: 1200 // Monto en céntimos (S/10.00)
+});
+
+ 
+  </script>
+</body>
+</html>

@@ -1,5 +1,7 @@
 require("dotenv").config();
 const express = require("express");
+const app = express(); 
+const path = require("path");
 const puppeteer = require("puppeteer");
 const axios = require("axios");
  const router = express.Router();
@@ -7,15 +9,52 @@ const FormData = require("form-data");
  
 const bodyParser = require("body-parser");
   
- 
+
 const PORT = process.env.PORT || 3000;
 
  
-
-const app = express();
-app.use(bodyParser.json());
-app.use(express.static('public'));
+ const { MercadoPagoConfig, Preference } = require("mercadopago");
  
+  const mercadopago = new MercadoPagoConfig({
+    accessToken: process.env.ACCESS_TOKEN,
+  });
+  
+  app.use(bodyParser.json());
+  app.use(express.static("public"));
+  
+  app.post("/crear-preferencia", async (req, res) => {
+    try {
+      const preference = await new Preference(mercadopago).create({
+        body: {
+          items: [
+            {
+              title: "Consulta vehicular",
+              quantity: 1,
+              unit_price:12,
+              currency_id: "PEN",
+            },
+          ],
+          back_urls: {
+            success: "https://www.consultavehicular.services/result.html",
+            failure: "https://www.consultavehicular.services/error",
+            pending: "https://www.consultavehicular.services/pendiente",
+          },
+          auto_return: "approved",
+        },
+      });
+  
+      res.json({ id: preference.id });
+    } catch (error) {
+      console.error("Error al crear preferencia:", error);
+      res.status(500).json({ error: "No se pudo crear la preferencia" });
+    }
+  });
+  
+ 
+ 
+
+ 
+
 // --------- FUNCIONES INDIVIDUALES ---------
 
 async function consultarLima(placa) {
@@ -567,38 +606,7 @@ const browser = await puppeteer.launch({
 // ✅ Ruta para procesar pagos
  
 
- app.post('/culqi-pagar', async (req, res) => {
-  const { token, email, placa, monto } = req.body;
-
- try {
-    const response = await fetch('https://api.culqi.com/v2/charges', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer sk_test_kGQnDxF3HdAxXazi' // tu clave privada
-      },
-      body: JSON.stringify({
-        amount: monto * 100,
-        currency_code: 'PEN',
-        email,
-        source_id: token,
-        description: `Pago por consulta de placa ${placa}`
-      })
-    });
-
-    const result = await response.json();
-
-    if (result.object === 'charge') {
-      res.json({ success: true, data: result });
-    } else {
-      res.json({ success: false, message: result.user_message || 'Error en el pago' });
-    }
-
-  } catch (err) {
-    console.error(err);
-    res.json({ success: false, message: 'Error en el servidor' });
-  }
-});
+ 
 
  
 // --------- INICIO ---------
